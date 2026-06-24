@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Usuarios · PetLove Admin</title>
+</head>
+<body>
+<main>
+
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs font-semibold text-primary bg-green-50 border border-green-200
+                             px-2.5 py-0.5 rounded-full uppercase tracking-wide">Admin</span>
+            </div>
+            <h1 class="font-display text-3xl font-bold text-gray-800">Usuarios</h1>
+            <p class="text-gray-500 text-sm mt-1">Gestiona las cuentas registradas.</p>
+        </div>
+    </div>
+
+    <!-- Stats rápidas -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Total usuarios</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" th:text="${totalUsuarios}">0</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Clientes</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" th:text="${totalClientes}">0</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Admins</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" th:text="${totalAdmins}">0</p>
+        </div>
+        <div class="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+            <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Activos hoy</p>
+            <p class="text-3xl font-bold text-gray-800 mt-1" th:text="${activosHoy}">0</p>
+        </div>
+    </div>
+
+    <!-- Buscador -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div class="p-4 border-b border-gray-100 flex items-center gap-3">
+            <span class="text-gray-400 text-sm">🔍</span>
+            <form th:action="@{/admin/usuarios}" method="get" class="flex-1 flex gap-2">
+                <input type="text" name="q" th:value="${q}" placeholder="Buscar por nombre o email..."
+                       class="flex-1 text-sm px-3 py-1.5 rounded-lg border border-gray-200 bg-gray-50
+                              focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition"/>
+                <button type="submit"
+                        class="text-sm font-medium text-white bg-primary hover:bg-primary-dark
+                               px-4 py-1.5 rounded-lg transition-colors">
+                    Buscar
+                </button>
+            </form>
+        </div>
+
+        <!-- Tabla -->
+        <table class="w-full text-sm">
+            <thead class="bg-gray-50 border-b border-gray-100">
+                <tr class="text-xs text-gray-400 uppercase tracking-wide">
+                    <th class="text-left px-6 py-4 font-medium">Nombre</th>
+                    <th class="text-left px-6 py-4 font-medium">Email</th>
+                    <th class="text-left px-6 py-4 font-medium">Teléfono</th>
+                    <th class="text-left px-6 py-4 font-medium">Rol</th>
+                    <th class="text-left px-6 py-4 font-medium">Mascotas</th>
+                    <th class="px-6 py-4"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="6" class="px-6 py-12 text-center text-gray-400 text-sm">
+                        No se encontraron usuarios.
+                    </td>
+                </tr>
+                <tr th:each="u : ${usuarios}"
+                    class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                    <td class="px-6 py-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary-light to-primary
+                                        flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+                                <span th:text="${#strings.substring(u.nombre,0,1)}">U</span>
+                            </div>
+                            <span class="font-medium text-gray-800"
+                                  th:text="${u.nombre} + ' ' + ${u.apellido}">Usuario</span>
+                        </div>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600" th:text="${u.email}">email@ejemplo.com</td>
+                    <td class="px-6 py-4 text-gray-500" th:text="${u.telefono ?: '—'}">—</td>
+                    <td class="px-6 py-4">
+                        <span th:text="${u.rol}"
+                              th:classappend="${u.rol == 'ADMIN'} ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700'"
+                              class="px-2.5 py-1 rounded-full text-xs font-semibold">
+                            CLIENTE
+                        </span>
+                    </td>
+                    <td class="px-6 py-4 text-gray-600"
+                        th:text="${u.mascotas != null} ? ${#lists.size(u.mascotas)} : '0'">0</td>
+                    <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                            <a th:href="@{/admin/usuarios/{id}(id=${u.id})}"
+                               class="text-primary hover:underline text-xs font-medium">Ver</a>
+                            <form th:action="@{/admin/usuarios/eliminar/{id}(id=${u.id})}" method="post"
+                                  onsubmit="return confirm('¿Eliminar este usuario?')">
+                                <button type="submit"
+                                        class="text-red-400 hover:text-red-600 text-xs font-medium transition-colors">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+</body>
+</html>

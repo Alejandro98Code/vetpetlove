@@ -1,18 +1,13 @@
 package com.certus.petlove.project.service;
 
-import java.util.HashSet;
-import java.util.Set;
-
+import com.certus.petlove.project.model.*;
+import com.certus.petlove.project.repository.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.certus.petlove.project.model.ERole;
-import com.certus.petlove.project.model.Role;
-import com.certus.petlove.project.model.Usuario;
-import com.certus.petlove.project.repository.RoleRepository;
-import com.certus.petlove.project.repository.UsuarioRepository;
-
-import lombok.RequiredArgsConstructor;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -22,19 +17,23 @@ public class ClienteService {
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public Usuario registrar(String nombre, String email, String password, String telefono, String direccion){
-        if(usuarioRepository.existsByEmail(email)){
-            throw new RuntimeException("El email ya esta registrado");
+    public Usuario registrar(String nombre, String apellido, String email,
+                             String password, String telefono,
+                             String direccion) {
+
+        if (usuarioRepository.existsByEmail(email)) {
+            throw new RuntimeException("El email ya está registrado");
         }
 
-        Role rolCliente = roleRepository.finByName(ERole.ROLE_CLIENTE)
-        .orElseThrow(()-> new RuntimeException("Role no encontrado"));
+        Role rolCliente = roleRepository.findByName(ERole.ROLE_CLIENTE)
+            .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
         Set<Role> roles = new HashSet<>();
         roles.add(rolCliente);
 
         Usuario usuario = new Usuario();
         usuario.setNombre(nombre);
+        usuario.setApellido(apellido);
         usuario.setEmail(email);
         usuario.setPassword(passwordEncoder.encode(password));
         usuario.setTelefono(telefono);
@@ -44,14 +43,15 @@ public class ClienteService {
         return usuarioRepository.save(usuario);
     }
 
-    public Usuario buscarPorEmail(String email){
-        return usuarioRepository.findByEmail(email).
-        orElseThrow(()-> new RuntimeException("Email no encontraod"));
+    public Usuario buscarPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
-    public Usuario actualizarPerfin(Long id, String nombre, String telefono, String direccion){
-        Usuario usuario = usuarioRepository.findById(id).
-        orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+    public Usuario actualizarPerfil(Long id, String nombre,
+                                    String telefono, String direccion) {
+        Usuario usuario = usuarioRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
         usuario.setNombre(nombre);
         usuario.setTelefono(telefono);
@@ -59,11 +59,4 @@ public class ClienteService {
 
         return usuarioRepository.save(usuario);
     }
-
-
-
-
-
-
-
 }

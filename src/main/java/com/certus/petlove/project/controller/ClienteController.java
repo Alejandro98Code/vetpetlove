@@ -40,26 +40,25 @@ public class ClienteController {
                                     Model model){
         try {
             Usuario cliente = clienteService.buscarPorEmail(userDetails.getUsername());
-            clienteService.actualizarPerfin(cliente.getId(), nombre, telefono, direccion);
+            clienteService.actualizarPerfil(cliente.getId(), nombre, telefono, direccion);
             return "redirect:/cliente/perfil?actualizado=true";
-        } catch( RuntimeException e) {
-            model.addAttribute("Error", e.getMessage());
+        } catch(RuntimeException e) {
+            model.addAttribute("error", e.getMessage());
             return "cliente/perfil";
         }
     }
 
-    @GetMapping("/mis-mascotas")
-    public String misMascotas(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    @GetMapping("/mascotas")
+    public String mascotas(@AuthenticationPrincipal UserDetails userDetails, Model model){
         Usuario cliente = clienteService.buscarPorEmail(userDetails.getUsername());
         model.addAttribute("mascotas", mascotaService.listarPorDueno(cliente.getId()));
-        return "cliente/mis-mascotas";
+        return "cliente/mascotas";
     }
 
-    @GetMapping("/mis-citas")
-    public String misCitas(@AuthenticationPrincipal UserDetails userDetails, Model model){
+    @GetMapping("/citas")
+    public String citas(@AuthenticationPrincipal UserDetails userDetails, Model model){
         Usuario cliente = clienteService.buscarPorEmail(userDetails.getUsername());
         model.addAttribute("citas", citaService.listarPorDueno(cliente.getId()));
-        return "cliente/mis-citas";
+        return "cita/lista";
     }
-    
 }

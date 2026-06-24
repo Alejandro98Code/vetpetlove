@@ -34,9 +34,9 @@ public class MascotaService {
 
         return mascotaRepository.save(mascota);
     }
-    
+
     public List<Mascota> listarPorDueno(Long duenioId){
-        return mascotaRepository.findByDuenoId(duenioId);
+        return mascotaRepository.findByDuenioId(duenioId);
     }
 
     public Mascota buscarPorId(Long id){
@@ -45,7 +45,9 @@ public class MascotaService {
     }
 
     public Mascota actualizar(Long id, String nombre, String especie, String raza, Double peso){
-        Mascota mascota = new Mascota();
+        // CORRECCIÓN: cargar la mascota existente en vez de crear una nueva
+        Mascota mascota = mascotaRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
         mascota.setNombre(nombre);
         mascota.setEspecie(especie);
         mascota.setRaza(raza);
@@ -61,6 +63,4 @@ public class MascotaService {
     public List<Mascota> listarTodas(){
         return mascotaRepository.findAll();
     }
-    
-    
 }

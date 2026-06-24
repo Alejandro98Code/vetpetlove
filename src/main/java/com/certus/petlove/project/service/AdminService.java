@@ -32,7 +32,7 @@ public class AdminService {
             throw new RuntimeException("El email ya esta registrado");
         }
 
-        Role rolVet = roleRepository.finByName(ERole.ROLE_VET)
+        Role rolVet = roleRepository.findByName(ERole.ROLE_VET)
         .orElseThrow(()-> new RuntimeException("Rol no encontrado"));
 
         Set<Role> roles = new HashSet<>();
@@ -52,7 +52,7 @@ public class AdminService {
         Usuario usuario = usuarioRepository.findById(usuarioId)
         .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        Role rol = roleRepository.finByName(nuevoRol)
+        Role rol = roleRepository.findByName(nuevoRol)
         .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
 
         Set<Role> roles = new HashSet<>();

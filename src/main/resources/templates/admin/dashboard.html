@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
+<head>
+    <title>Inicio · PetLove</title>
+</head>
+<body>
+<main>
+
+    <!-- Bienvenida -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="font-display text-3xl font-bold text-gray-800">
+                Hola, <span th:text="${usuario.nombre}">Usuario</span> 👋
+            </h1>
+            <p class="text-gray-500 mt-1 text-sm">Aquí tienes el resumen de hoy.</p>
+        </div>
+        <a th:href="@{/mascotas/nueva}"
+           class="bg-primary hover:bg-primary-dark text-white text-sm font-semibold
+                  px-5 py-2.5 rounded-xl transition-colors">
+            + Nueva mascota
+        </a>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4">
+            <div class="text-4xl">🐶</div>
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Mascotas</p>
+                <p class="text-3xl font-bold text-gray-800" th:text="${totalMascotas}">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4">
+            <div class="text-4xl">📅</div>
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Citas pendientes</p>
+                <p class="text-3xl font-bold text-gray-800" th:text="${citasPendientes}">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-4">
+            <div class="text-4xl">✅</div>
+            <div>
+                <p class="text-xs text-gray-400 uppercase tracking-wide font-medium">Citas completadas</p>
+                <p class="text-3xl font-bold text-gray-800" th:text="${citasCompletadas}">0</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Próximas citas -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display text-lg font-semibold text-gray-800">Próximas citas</h2>
+            <a th:href="@{/citas}" class="text-sm text-primary hover:underline font-medium">Ver todas</a>
+        </div>
+
+        <!-- Lista vacía -->
+        <div th:if="${#lists.isEmpty(proximasCitas)}"
+             class="text-center py-10 text-gray-400">
+            <span class="text-4xl block mb-2">📭</span>
+            <p class="text-sm">No tienes citas próximas.</p>
+            <a th:href="@{/citas/nueva}"
+               class="inline-block mt-3 text-primary text-sm font-medium hover:underline">
+                Agendar una cita
+            </a>
+        </div>
+
+        <!-- Tabla de citas -->
+        <table th:unless="${#lists.isEmpty(proximasCitas)}"
+               class="w-full text-sm">
+            <thead>
+                <tr class="text-xs text-gray-400 uppercase tracking-wide border-b border-gray-100">
+                    <th class="text-left pb-3 font-medium">Mascota</th>
+                    <th class="text-left pb-3 font-medium">Servicio</th>
+                    <th class="text-left pb-3 font-medium">Fecha</th>
+                    <th class="text-left pb-3 font-medium">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="cita : ${proximasCitas}"
+                    class="border-b border-gray-50 last:border-0 hover:bg-gray-50 transition-colors">
+                    <td class="py-3 font-medium text-gray-700" th:text="${cita.mascota.nombre}">Max</td>
+                    <td class="py-3 text-gray-600" th:text="${cita.servicio}">Consulta</td>
+                    <td class="py-3 text-gray-600" th:text="${#temporals.format(cita.fecha,'dd/MM/yyyy HH:mm')}">01/01/2025</td>
+                    <td class="py-3">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-700"
+                              th:text="${cita.estado}">Pendiente</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Mis mascotas -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h2 class="font-display text-lg font-semibold text-gray-800">Mis mascotas</h2>
+            <a th:href="@{/mascotas}" class="text-sm text-primary hover:underline font-medium">Ver todas</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(mascotas)}"
+             class="text-center py-10 text-gray-400">
+            <span class="text-4xl block mb-2">🐾</span>
+            <p class="text-sm">Aún no tienes mascotas registradas.</p>
+            <a th:href="@{/mascotas/nueva}"
+               class="inline-block mt-3 text-primary text-sm font-medium hover:underline">
+                Agregar mascota
+            </a>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(mascotas)}"
+             class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a th:each="m : ${mascotas}" th:href="@{/mascotas/{id}(id=${m.id})}"
+               class="flex flex-col items-center gap-2 p-4 rounded-xl border border-gray-100
+                      hover:border-primary hover:bg-green-50 transition-all text-center group">
+                <span class="text-4xl">🐾</span>
+                <span class="text-sm font-semibold text-gray-700 group-hover:text-primary transition-colors"
+                      th:text="${m.nombre}">Max</span>
+                <span class="text-xs text-gray-400" th:text="${m.especie}">Perro</span>
+            </a>
+        </div>
+    </div>
+
+</main>
+</body>
+</html>

@@ -10,6 +10,6 @@ import com.certus.petlove.project.model.Role;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long>{
-    Optional<Role> finByName(ERole name);
+    Optional<Role> findByName(ERole name);
     
 }

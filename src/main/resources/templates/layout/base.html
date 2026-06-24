@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="layout(title, main)">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:replace="${title}">PetLove</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary:   { DEFAULT: '#4F7942', light: '#6AAF5A', dark: '#3A5C30' },
+                        secondary: { DEFAULT: '#F5A623', light: '#F7C06B' },
+                        cream:     '#FDFAF4',
+                        bark:      '#7C5C3E',
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'Georgia', 'serif'],
+                        body:    ['"Inter"', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-cream font-body text-gray-800 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 flex items-center justify-between h-16">
+            <a th:href="@{/cliente/mascotas}" class="flex items-center gap-2 font-display text-primary text-xl font-bold">
+                🐾 PetLove
+            </a>
+            <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+                <a th:href="@{/cliente/mascotas}" class="hover:text-primary transition-colors">Mis mascotas</a>
+                <a th:href="@{/cliente/citas}"    class="hover:text-primary transition-colors">Citas</a>
+                <a th:href="@{/cliente/perfil}"   class="hover:text-primary transition-colors">Perfil</a>
+                <a th:href="@{/admin/usuarios}" class="hover:text-primary transition-colors"
+                   th:if="${#authorization.expression('hasRole(''ADMIN'')')}">Usuarios</a>
+            </div>
+            <form th:action="@{/auth/logout}" method="post">
+                <button type="submit" class="text-sm text-gray-500 hover:text-red-500 transition-colors font-medium">
+                    Cerrar sesión
+                </button>
+            </form>
+        </div>
+    </nav>
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8" th:replace="${main}">
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-4 text-center text-xs text-gray-400">
+        © 2025 PetLove · Cuidamos lo que más quieres
+    </footer>
+
+</body>
+</html>
