@@ -1,102 +1,197 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
-<head>
-    <title>Agendar cita · PetLove</title>
-</head>
+<head><title>Book Appointment · PetLove</title></head>
 <body>
 <main>
 
-    <div class="max-w-xl mx-auto">
+    <h1 class="text-2xl font-bold text-gray-800 mb-1">Book an Appointment</h1>
+    <p class="text-sm text-gray-400 mb-8">Complete your pet's health details to proceed.</p>
 
-        <nav class="text-sm text-gray-400 mb-6 flex items-center gap-2">
-            <a th:href="@{/cliente/citas}" class="hover:text-primary transition-colors">Mis citas</a>
-            <span>›</span>
-            <span class="text-gray-600">Agendar</span>
-        </nav>
+    <div th:if="${error}" th:text="${error}"
+         class="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+    </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+    <form th:action="@{/cita/agendar}" method="post" id="booking-form">
+    <div class="grid grid-cols-5 gap-6">
 
-            <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl">📅</span>
-                <h1 class="font-display text-2xl font-semibold text-gray-800">Agendar cita</h1>
+        <!-- LEFT: Pet + Service -->
+        <div class="col-span-2 space-y-5">
+
+            <!-- Select Pet -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-sm font-bold text-gray-700">Select Pet</h2>
+                    <a th:href="@{/mascotas/nueva}" class="text-xs text-petblue font-medium hover:underline">⊕ Add New</a>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <label th:each="m : ${mascotas}"
+                           class="relative cursor-pointer">
+                        <input type="radio" name="mascotaId" th:value="${m.id}" required class="sr-only peer"/>
+                        <div class="border-2 border-gray-200 rounded-xl p-3 text-center
+                                    peer-checked:border-petblue peer-checked:bg-petblue-light transition-colors">
+                            <div class="text-2xl mb-1"
+                                 th:text="${m.especie == 'Perro'} ? '🐶' : (${m.especie == 'Gato'} ? '🐱' : '🐾')">🐾</div>
+                            <p class="text-xs font-bold text-gray-800" th:text="${m.nombre}">Luna</p>
+                            <p class="text-[10px] text-gray-400 uppercase tracking-wide" th:text="${m.raza ?: m.especie}">Retriever</p>
+                        </div>
+                    </label>
+                </div>
+                <!-- Si no hay mascotas -->
+                <p th:if="${#lists.isEmpty(mascotas)}" class="text-xs text-gray-400 text-center py-4">
+                    No tienes mascotas registradas.
+                    <a th:href="@{/mascotas/nueva}" class="text-petblue hover:underline">Agrega una</a>
+                </p>
             </div>
 
-            <div th:if="${error}" th:text="${error}"
-                 class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+            <!-- Choose Service / Motivo -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h2 class="text-sm font-bold text-gray-700 mb-4">Motivo de la cita</h2>
+                <div class="space-y-2">
+                    <label th:each="motivo : ${ {'Consulta general','Vacunación','Cirugía','Desparasitación','Control de peso','Otro'} }"
+                           class="flex items-center gap-3 p-3 rounded-xl border border-gray-200 cursor-pointer hover:border-petblue transition-colors
+                                  has-[:checked]:border-petblue has-[:checked]:bg-petblue-light">
+                        <input type="radio" name="motivo" th:value="${motivo}" class="text-petblue focus:ring-petblue"/>
+                        <div>
+                            <p class="text-sm font-medium text-gray-700" th:text="${motivo}">Consulta general</p>
+                        </div>
+                    </label>
+                </div>
             </div>
 
-            <!-- Sin @th:object — usamos name= directos para coincidir con @RequestParam -->
-            <form th:action="@{/cita/agendar}" method="post" class="space-y-5">
+            <!-- Veterinario -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                <h2 class="text-sm font-bold text-gray-700 mb-3">Veterinario</h2>
+                <select name="veterinarioId" required
+                        class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                               focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition">
+                    <option value="">Seleccionar veterinario</option>
+                    <option th:each="v : ${veterinarios}"
+                            th:value="${v.id}"
+                            th:text="${v.nombre} + ' ' + ${v.apellido}">Dr. López</option>
+                </select>
+            </div>
+        </div>
 
-                <!-- Mascota -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Mascota</label>
-                    <select name="mascotaId" required
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                   text-sm transition">
-                        <option value="">Seleccionar mascota</option>
-                        <option th:each="m : ${mascotas}"
-                                th:value="${m.id}"
-                                th:text="${m.nombre} + ' (' + ${m.especie} + ')'"
-                                th:selected="${mascotaIdSeleccionada != null and mascotaIdSeleccionada == m.id}">
-                            Max (Perro)
-                        </option>
-                    </select>
+        <!-- RIGHT: Calendar + Time -->
+        <div class="col-span-3">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-lg font-bold text-gray-800 mb-5">Select Date &amp; Time</h2>
+
+                <div class="grid grid-cols-2 gap-6">
+                    <!-- Date picker -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-2">Fecha</label>
+                        <input type="date" id="fecha-picker"
+                               class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue transition"/>
+                    </div>
+                    <!-- Time slots -->
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-2">Available Slots</label>
+                        <div class="grid grid-cols-2 gap-2" id="time-slots">
+                            <button type="button" th:each="slot : ${ {'09:00','09:30','10:00','10:30','11:00','11:30','13:00','13:30','14:00','14:30','15:00','15:30'} }"
+                                    th:text="${slot}"
+                                    th:attr="data-time=${slot}"
+                                    class="time-btn py-2 rounded-lg border border-gray-200 text-xs font-medium text-gray-600
+                                           hover:border-petblue hover:text-petblue hover:bg-petblue-light transition-colors">
+                                09:00
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Veterinario -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Veterinario</label>
-                    <select name="veterinarioId" required
-                            class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                   focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                   text-sm transition">
-                        <option value="">Seleccionar veterinario</option>
-                        <option th:each="v : ${veterinarios}"
-                                th:value="${v.id}"
-                                th:text="${v.nombre} + ' ' + ${v.apellido}">
-                            Dr. López
-                        </option>
-                    </select>
-                </div>
+                <!-- Hidden fechaHora input -->
+                <input type="hidden" name="fechaHora" id="fechaHora-input"/>
 
-                <!-- Fecha y hora -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Fecha y hora</label>
-                    <input type="datetime-local" name="fechaHora" required
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
-                </div>
+                <p class="text-xs text-petblue bg-petblue-light rounded-lg px-3 py-2 mt-5">
+                    ℹ This practitioner typically runs on time. Please arrive 5 minutes early.
+                </p>
+            </div>
+        </div>
 
-                <!-- Motivo -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Motivo</label>
-                    <textarea name="motivo" rows="3"
-                              placeholder="Síntomas, motivo de la consulta..."
-                              class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                     focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                     text-sm transition resize-none"></textarea>
-                </div>
+    </div>
 
-                <div class="flex gap-3 pt-2">
-                    <button type="submit"
-                            class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold
-                                   py-2.5 rounded-lg transition-colors text-sm">
-                        Confirmar cita
-                    </button>
-                    <a th:href="@{/cliente/citas}"
-                       class="flex-1 text-center text-sm font-medium text-gray-600 border border-gray-200
-                              py-2.5 rounded-lg hover:bg-gray-50 transition-colors">
-                        Cancelar
-                    </a>
-                </div>
-
-            </form>
+    <!-- Bottom bar -->
+    <div class="fixed bottom-0 left-56 right-0 bg-white border-t border-gray-100 shadow-lg px-8 py-4 flex items-center gap-6">
+        <div class="flex items-center gap-3 text-sm">
+            <span class="w-9 h-9 bg-petblue-light rounded-lg flex items-center justify-center text-lg">🐾</span>
+            <div>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide">PET</p>
+                <p class="font-semibold text-gray-700" id="summary-pet">—</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <span class="w-9 h-9 bg-petgreen-light rounded-lg flex items-center justify-center text-lg">📋</span>
+            <div>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide">MOTIVO</p>
+                <p class="font-semibold text-gray-700" id="summary-motivo">—</p>
+            </div>
+        </div>
+        <div class="flex items-center gap-3 text-sm">
+            <span class="w-9 h-9 bg-amber-50 rounded-lg flex items-center justify-center text-lg">📅</span>
+            <div>
+                <p class="text-[10px] text-gray-400 uppercase tracking-wide">SCHEDULE</p>
+                <p class="font-semibold text-gray-700" id="summary-date">—</p>
+            </div>
+        </div>
+        <div class="ml-auto flex gap-3">
+            <a th:href="@{/cliente/citas}"
+               class="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                Cancel
+            </a>
+            <button type="submit"
+                    class="px-6 py-2.5 rounded-lg bg-petblue hover:bg-petblue-dark text-white text-sm font-semibold transition-colors">
+                Confirm Appointment
+            </button>
         </div>
     </div>
+    </form>
+
+    <div class="h-20"></div><!-- spacer for fixed bar -->
+
+    <script>
+        // Time slot selection → sets hidden fechaHora
+        const fechaInput = document.getElementById('fecha-picker');
+        const fechaHoraInput = document.getElementById('fechaHora-input');
+        const summaryDate = document.getElementById('summary-date');
+        let selectedTime = '';
+
+        document.querySelectorAll('.time-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.time-btn').forEach(b => {
+                    b.classList.remove('bg-petblue', 'text-white', 'border-petblue');
+                    b.classList.add('border-gray-200', 'text-gray-600');
+                });
+                btn.classList.add('bg-petblue', 'text-white', 'border-petblue');
+                btn.classList.remove('border-gray-200', 'text-gray-600');
+                selectedTime = btn.dataset.time;
+                updateFechaHora();
+            });
+        });
+
+        fechaInput.addEventListener('change', updateFechaHora);
+
+        function updateFechaHora() {
+            if (fechaInput.value && selectedTime) {
+                fechaHoraInput.value = fechaInput.value + 'T' + selectedTime + ':00';
+                summaryDate.textContent = fechaInput.value + ' · ' + selectedTime;
+            }
+        }
+
+        // Summary pet & motivo
+        document.querySelectorAll('input[name="mascotaId"]').forEach(r => {
+            r.addEventListener('change', () => {
+                const label = r.closest('label').querySelector('p.text-xs');
+                document.getElementById('summary-pet').textContent = label ? label.textContent : '—';
+            });
+        });
+        document.querySelectorAll('input[name="motivo"]').forEach(r => {
+            r.addEventListener('change', () => {
+                document.getElementById('summary-motivo').textContent = r.value;
+            });
+        });
+    </script>
 
 </main>
 </body>

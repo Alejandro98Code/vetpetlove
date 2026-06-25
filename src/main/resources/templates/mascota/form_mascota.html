@@ -1,124 +1,146 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       th:replace="~{layout/base :: layout(~{::title}, ~{::main})}">
-<head>
-    <title th:text="${mascota.id} ? 'Editar mascota · PetLove' : 'Nueva mascota · PetLove'">Mascota · PetLove</title>
-</head>
+<head><title>Register Pet · PetLove</title></head>
 <body>
 <main>
 
-    <div class="max-w-xl mx-auto">
+    <div class="flex items-start justify-between mb-8">
+        <div>
+            <h1 class="text-2xl font-bold text-gray-800">Register New Pet</h1>
+            <p class="text-sm text-gray-400 mt-1">Complete the medical profile to start managing appointments and clinical history.</p>
+        </div>
+        <div class="flex gap-3">
+            <a th:href="@{/cliente/mascotas}"
+               class="px-5 py-2.5 rounded-lg border border-gray-200 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors">
+                Cancel
+            </a>
+            <button form="pet-form" type="submit"
+                    class="px-5 py-2.5 rounded-lg bg-petblue hover:bg-petblue-dark text-white text-sm font-semibold transition-colors">
+                Register Pet
+            </button>
+        </div>
+    </div>
 
-        <!-- Breadcrumb -->
-        <nav class="text-sm text-gray-400 mb-6 flex items-center gap-2">
-            <a th:href="@{/cliente/mascotasotas}" class="hover:text-primary transition-colors">Mis mascotas</a>
-            <span>›</span>
-            <span class="text-gray-600"
-                  th:text="${mascota.id} ? 'Editar' : 'Nueva mascota'">Nueva mascota</span>
-        </nav>
+    <div th:if="${error}" th:text="${error}"
+         class="mb-6 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+    </div>
 
-        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-8">
+    <form id="pet-form"
+          th:action="${mascota.id} ? @{/mascotas/{id}/editar(id=${mascota.id})} : @{/mascotas/nueva}"
+          th:object="${mascota}" method="post"
+          class="grid grid-cols-3 gap-6">
 
-            <div class="flex items-center gap-3 mb-6">
-                <span class="text-3xl">🐾</span>
-                <h1 class="font-display text-2xl font-semibold text-gray-800"
-                    th:text="${mascota.id} ? 'Editar mascota' : 'Nueva mascota'">Nueva mascota</h1>
-            </div>
-
-            <!-- Error -->
-            <div th:if="${error}" th:text="${error}"
-                 class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-            </div>
-
-            <form th:action="${mascota.id} ? @{/mascotas/{id}/editar(id=${mascota.id})} : @{/mascotas/nueva}"
-                  th:object="${mascota}" method="post" class="space-y-5">
-
-                <!-- Nombre -->
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la mascota</label>
-                    <input type="text" th:field="*{nombre}" placeholder="Max" required
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
+        <!-- Left: Photo placeholder -->
+        <div class="col-span-1">
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 text-center">
+                <p class="text-sm font-semibold text-gray-700 mb-4">Pet Photo</p>
+                <div class="border-2 border-dashed border-gray-200 rounded-xl py-10 px-4 flex flex-col items-center gap-2 bg-gray-50">
+                    <div class="w-12 h-12 rounded-full bg-petgreen-light flex items-center justify-center">
+                        <svg class="w-6 h-6 text-petgreen" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                    </div>
+                    <p class="text-xs font-medium text-gray-600">Click or drag photo</p>
+                    <p class="text-[11px] text-gray-400">PNG, JPG up to 10MB</p>
                 </div>
+                <p class="text-[11px] text-gray-400 italic mt-4">"A clear face photo helps our veterinarians identify your pet quickly."</p>
+            </div>
+        </div>
 
-                <!-- Especie + Raza -->
-                <div class="grid grid-cols-2 gap-4">
+        <!-- Right: Form sections -->
+        <div class="col-span-2 space-y-5">
+
+            <!-- Identity & Species -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="text-petblue">🪪</span> Identity &amp; Species
+                </h2>
+                <div class="grid grid-cols-2 gap-4 mb-4">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Especie</label>
-                        <select th:field="*{especie}" required
-                                class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                       focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                       text-sm transition">
-                            <option value="">Seleccionar</option>
-                            <option value="Perro">Perro 🐶</option>
-                            <option value="Gato">Gato 🐱</option>
-                            <option value="Ave">Ave 🐦</option>
-                            <option value="Conejo">Conejo 🐰</option>
-                            <option value="Otro">Otro</option>
+                        <label class="block text-xs font-medium text-gray-500 mb-1.5">Pet Name</label>
+                        <input type="text" th:field="*{nombre}" placeholder="e.g. Luna" required
+                               class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1.5">Breed</label>
+                        <input type="text" th:field="*{raza}" placeholder="e.g. Golden Retriever"
+                               class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                    </div>
+                </div>
+                <!-- Species pills -->
+                <div>
+                    <label class="block text-xs font-medium text-gray-500 mb-2">Species Selection</label>
+                    <div class="flex gap-3 flex-wrap">
+                        <label th:each="esp : ${ {'Perro','Gato','Ave','Otro'} }"
+                               class="flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 cursor-pointer
+                                      text-sm font-medium text-gray-600 hover:border-petblue hover:text-petblue transition-colors
+                                      has-[:checked]:border-petblue has-[:checked]:bg-petblue-light has-[:checked]:text-petblue">
+                            <input type="radio" th:field="*{especie}" th:value="${esp}" class="sr-only"/>
+                            <span th:text="${esp == 'Perro'} ? '🐶 Dog' : (${esp == 'Gato'} ? '🐱 Cat' : (${esp == 'Ave'} ? '🐦 Bird' : '❓ Other'))"
+                                  >Dog</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Physical & Birth -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2">
+                    <span class="text-petblue">📋</span> Physical &amp; Birth Details
+                </h2>
+                <div class="grid grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1.5">Birth Date</label>
+                        <input type="date" th:field="*{fechaNacimiento}"
+                               class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1.5">Gender</label>
+                        <select th:field="*{sexo}"
+                                class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                       focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition">
+                            <option value="">Select Gender</option>
+                            <option value="MACHO">Male</option>
+                            <option value="HEMBRA">Female</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Raza</label>
-                        <input type="text" th:field="*{raza}" placeholder="Labrador"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                      focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                      text-sm transition"/>
+                        <label class="block text-xs font-medium text-gray-500 mb-1.5">Weight (kg)</label>
+                        <input type="number" th:field="*{peso}" placeholder="0.0" step="0.1" min="0"
+                               class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
                     </div>
                 </div>
+            </div>
 
-                <!-- Fecha de Nacimiento + Peso -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Fecha de nacimiento</label>
-                        <input type="date" th:field="*{fechaNacimiento}"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                      focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                      text-sm transition"/>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
-                        <input type="number" th:field="*{peso}" placeholder="12.5" step="0.1" min="0"
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                      focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                      text-sm transition"/>
-                    </div>
+            <!-- Tags & Notes -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+                <h2 class="text-sm font-bold text-gray-700 mb-1 flex items-center gap-2">
+                    <span class="text-petblue">🏷</span> Tags &amp; Characteristics
+                </h2>
+                <p class="text-xs text-gray-400 mb-4">Select all relevant attributes for clinical context.</p>
+                <div class="flex flex-wrap gap-2 mb-5">
+                    <span th:each="tag : ${ {'Vaccinated','Energetic','Friendly','Microchipped','Has Allergies','Indoor Only','Calm'} }"
+                          th:text="${tag}"
+                          class="px-3 py-1.5 rounded-full border border-gray-200 text-xs font-medium text-gray-600
+                                 hover:border-petblue hover:text-petblue cursor-pointer transition-colors select-none">Tag</span>
                 </div>
-
-                <!-- Sexo — valores deben coincidir con el enum: MACHO / HEMBRA -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Sexo</label>
-                    <div class="flex gap-4">
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" th:field="*{sexo}" value="MACHO"
-                                   class="text-primary focus:ring-primary"/>
-                            <span class="text-sm text-gray-700">Macho</span>
-                        </label>
-                        <label class="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" th:field="*{sexo}" value="HEMBRA"
-                                   class="text-primary focus:ring-primary"/>
-                            <span class="text-sm text-gray-700">Hembra</span>
-                        </label>
-                    </div>
+                    <label class="block text-xs font-medium text-gray-500 mb-1.5">Special Medical Notes</label>
+                    <textarea rows="3" name="notas"
+                              placeholder="List any chronic conditions, dietary requirements, or specific behavioral traits..."
+                              class="w-full px-3.5 py-2.5 rounded-lg border border-gray-200 bg-gray-50 text-sm resize-none
+                                     focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"></textarea>
                 </div>
+            </div>
 
-                <!-- Botones -->
-                <div class="flex gap-3 pt-2">
-                    <button type="submit"
-                            class="flex-1 bg-primary hover:bg-primary-dark text-white font-semibold
-                                   py-2.5 rounded-lg transition-colors text-sm">
-                        Guardar mascota
-                    </button>
-                    <a th:href="@{/cliente/mascotasotas}"
-                       class="flex-1 text-center text-sm font-medium text-gray-600 border border-gray-200
-                              py-2.5 rounded-lg hover:bg-gray-50 transition-colors">
-                        Cancelar
-                    </a>
-                </div>
-
-            </form>
         </div>
-    </div>
+    </form>
 
 </main>
 </body>

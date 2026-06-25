@@ -28,7 +28,7 @@ public class AdminController {
     public String dashboard(Model model){
         model.addAttribute("totalUsuarios", adminService.listarTodosUsuarios().size());
         model.addAttribute("totalMascotas", mascotaService.listarTodas().size());
-        model.addAttribute("totalCitas", citaService.listadTodas().size());
+        model.addAttribute("totalCitas", citaService.listarTodas().size());
         model.addAttribute("veterinarios", adminService.listarTodosUsuarios().size());
         return "admin/dashboard";
     }
@@ -79,7 +79,7 @@ public class AdminController {
 
     @GetMapping("/citas")
     public String listarCitas(Model model){
-        model.addAttribute("citas", citaService.listadTodas());
+        model.addAttribute("citas", citaService.listarTodas());
         return "admin/citas";
     }
     

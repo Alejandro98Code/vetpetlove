@@ -10,38 +10,65 @@
             theme: {
                 extend: {
                     colors: {
-                        primary:   { DEFAULT: '#4F7942', light: '#6AAF5A', dark: '#3A5C30' },
-                        secondary: '#F5A623',
-                        cream:     '#FDFAF4',
+                        petblue: { DEFAULT: '#1A73E8', dark: '#1557B0', light: '#E8F0FE' },
                     },
-                    fontFamily: {
-                        display: ['"Playfair Display"', 'Georgia', 'serif'],
-                        body:    ['"Inter"', 'system-ui', 'sans-serif'],
-                    }
+                    fontFamily: { sans: ['"Inter"', 'system-ui', 'sans-serif'] }
                 }
             }
         }
     </script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 </head>
-<body class="bg-cream font-body min-h-screen flex items-center justify-center px-4 py-10">
+<body class="font-sans min-h-screen flex">
 
-    <div class="w-full max-w-md">
-
-        <!-- Logo -->
-        <div class="text-center mb-8">
-            <span class="text-5xl">🐾</span>
-            <h1 class="font-display text-primary text-3xl font-bold mt-2">PetLove</h1>
-            <p class="text-gray-500 text-sm mt-1">Crea tu cuenta y cuida a tu mascota</p>
+    <!-- LEFT: Photo panel -->
+    <div class="hidden lg:flex lg:w-[45%] relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent z-10"></div>
+        <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=1200&q=80"
+             alt="Veterinaria con mascota"
+             class="w-full h-full object-cover object-center"/>
+        <!-- Floating card -->
+        <div class="absolute top-10 left-8 z-20 bg-white/20 backdrop-blur-md rounded-2xl px-5 py-4 text-white border border-white/30">
+            <p class="text-xs font-semibold uppercase tracking-widest opacity-80 mb-1">PetLove</p>
+            <p class="text-lg font-bold leading-snug">Únete a miles de<br/>dueños responsables.</p>
         </div>
+        <!-- Stats chips -->
+        <div class="absolute bottom-12 left-8 right-8 z-20 flex gap-3">
+            <div class="bg-white/20 backdrop-blur-md rounded-xl px-4 py-3 text-white border border-white/30 flex-1 text-center">
+                <p class="text-xl font-bold">+5k</p>
+                <p class="text-xs opacity-80">Mascotas registradas</p>
+            </div>
+            <div class="bg-white/20 backdrop-blur-md rounded-xl px-4 py-3 text-white border border-white/30 flex-1 text-center">
+                <p class="text-xl font-bold">98%</p>
+                <p class="text-xs opacity-80">Clientes satisfechos</p>
+            </div>
+            <div class="bg-white/20 backdrop-blur-md rounded-xl px-4 py-3 text-white border border-white/30 flex-1 text-center">
+                <p class="text-xl font-bold">24/7</p>
+                <p class="text-xs opacity-80">Soporte disponible</p>
+            </div>
+        </div>
+    </div>
 
-        <!-- Card -->
-        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-            <h2 class="font-display text-2xl font-semibold text-gray-800 mb-6">Crear cuenta</h2>
+    <!-- RIGHT: Form panel -->
+    <div class="flex-1 flex flex-col items-center justify-center px-8 py-10 bg-white overflow-y-auto">
+        <div class="w-full max-w-sm">
+
+            <!-- Logo -->
+            <div class="flex flex-col items-center mb-6">
+                <div class="w-12 h-12 bg-petblue rounded-2xl flex items-center justify-center mb-2.5 shadow-md">
+                    <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                    </svg>
+                </div>
+                <p class="text-xs font-semibold text-petblue tracking-widest uppercase">PetLove</p>
+            </div>
+
+            <h1 class="text-2xl font-bold text-gray-900 text-center mb-1">Crear cuenta gratis</h1>
+            <p class="text-sm text-gray-400 text-center mb-6">Empieza a cuidar a tus mascotas hoy mismo.</p>
 
             <!-- Error -->
             <div th:if="${error}" th:text="${error}"
-                 class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                 class="mb-5 px-4 py-3 bg-red-50 border border-red-200 rounded-xl text-red-600 text-sm">
             </div>
 
             <form th:action="@{/auth/register}" method="post" class="space-y-4">
@@ -49,78 +76,176 @@
                 <!-- Nombre + Apellido -->
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Nombre</label>
                         <input type="text" name="nombre" placeholder="Ana" required
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                      focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                      text-sm transition"/>
+                               class="w-full px-3.5 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Apellido</label>
+                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Apellido</label>
                         <input type="text" name="apellido" placeholder="García" required
-                               class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                      focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                      text-sm transition"/>
+                               class="w-full px-3.5 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
                     </div>
                 </div>
 
                 <!-- Email -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input type="email" name="email" placeholder="tu@email.com" required
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Correo Electrónico</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </span>
+                        <input type="email" name="email" placeholder="nombre@ejemplo.com" required
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                    </div>
                 </div>
 
-                <!-- Contraseña -->
+                <!-- Password -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Contraseña</label>
-                    <input type="password" name="password" placeholder="Mínimo 8 caracteres" required
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">Contraseña</label>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </span>
+                        <input type="password" id="pwd" name="password" placeholder="Mínimo 8 caracteres" required
+                               class="w-full pl-10 pr-11 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                        <button type="button" onclick="togglePwd()"
+                                class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Password strength -->
+                    <div class="flex gap-1 mt-2" id="strength-bars">
+                        <div class="h-1 flex-1 rounded-full bg-gray-200 transition-colors" id="bar1"></div>
+                        <div class="h-1 flex-1 rounded-full bg-gray-200 transition-colors" id="bar2"></div>
+                        <div class="h-1 flex-1 rounded-full bg-gray-200 transition-colors" id="bar3"></div>
+                        <div class="h-1 flex-1 rounded-full bg-gray-200 transition-colors" id="bar4"></div>
+                    </div>
                 </div>
 
                 <!-- Teléfono -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">
                         Teléfono <span class="text-gray-400 font-normal">(opcional)</span>
                     </label>
-                    <input type="text" name="telefono" placeholder="+51 999 000 000"
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </span>
+                        <input type="text" name="telefono" placeholder="+51 999 000 000"
+                               class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                      focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
+                    </div>
                 </div>
 
                 <!-- Dirección -->
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">
+                    <label class="block text-xs font-medium text-gray-600 mb-1.5">
                         Dirección <span class="text-gray-400 font-normal">(opcional)</span>
                     </label>
                     <input type="text" name="direccion" placeholder="Av. Los Olivos 123, Lima"
-                           class="w-full px-4 py-2.5 rounded-lg border border-gray-200 bg-gray-50
-                                  focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent
-                                  text-sm transition"/>
+                           class="w-full px-3.5 py-3 rounded-xl border border-gray-200 bg-gray-50 text-sm
+                                  focus:outline-none focus:ring-2 focus:ring-petblue focus:border-transparent transition"/>
                 </div>
 
+                <!-- Terms -->
+                <label class="flex items-start gap-2.5 cursor-pointer">
+                    <input type="checkbox" required class="mt-0.5 rounded text-petblue focus:ring-petblue"/>
+                    <span class="text-xs text-gray-500">
+                        Acepto los <a href="#" class="text-petblue hover:underline font-medium">Términos de Servicio</a>
+                        y la <a href="#" class="text-petblue hover:underline font-medium">Política de Privacidad</a>
+                    </span>
+                </label>
+
+                <!-- Submit -->
                 <button type="submit"
-                        class="w-full bg-primary hover:bg-primary-dark text-white font-semibold
-                               py-2.5 rounded-lg transition-colors text-sm mt-2">
+                        class="w-full bg-petblue hover:bg-petblue-dark text-white font-semibold
+                               py-3 rounded-xl transition-colors text-sm flex items-center justify-center gap-2">
                     Crear cuenta
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
+                    </svg>
                 </button>
-
             </form>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-3 my-5">
+                <div class="flex-1 h-px bg-gray-200"></div>
+                <span class="text-xs text-gray-400">O regístrate con</span>
+                <div class="flex-1 h-px bg-gray-200"></div>
+            </div>
+
+            <!-- Social -->
+            <div class="grid grid-cols-2 gap-3">
+                <button type="button"
+                        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200
+                               text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                </button>
+                <button type="button"
+                        class="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200
+                               text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
+                    </svg>
+                    Apple
+                </button>
+            </div>
+
+            <!-- Login link -->
+            <p class="text-center text-sm text-gray-500 mt-6">
+                ¿Ya tienes cuenta?
+                <a th:href="@{/auth/login}" class="text-petblue font-semibold hover:underline">Inicia sesión</a>
+            </p>
+
         </div>
-
-        <!-- Login -->
-        <p class="text-center text-sm text-gray-500 mt-6">
-            ¿Ya tienes cuenta?
-            <a th:href="@{/auth/login}" class="text-primary font-medium hover:underline">
-                Inicia sesión
-            </a>
-        </p>
-
     </div>
+
+    <script>
+        function togglePwd() {
+            const pwd = document.getElementById('pwd');
+            pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        }
+
+        // Password strength indicator
+        document.getElementById('pwd').addEventListener('input', function() {
+            const val = this.value;
+            const bars = ['bar1','bar2','bar3','bar4'];
+            const colors = ['bg-red-400','bg-orange-400','bg-yellow-400','bg-green-500'];
+            let strength = 0;
+            if (val.length >= 6) strength++;
+            if (val.length >= 10) strength++;
+            if (/[A-Z]/.test(val) && /[0-9]/.test(val)) strength++;
+            if (/[^A-Za-z0-9]/.test(val)) strength++;
+            bars.forEach((id, i) => {
+                const el = document.getElementById(id);
+                el.className = 'h-1 flex-1 rounded-full transition-colors ' +
+                    (i < strength ? colors[strength - 1] : 'bg-gray-200');
+            });
+        });
+    </script>
 </body>
 </html>

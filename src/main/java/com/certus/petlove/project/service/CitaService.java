@@ -24,11 +24,12 @@ public class CitaService {
     private final UsuarioRepository usuarioRepository;
 
     public Cita agendar(Long mascotaId, Long veterinarioId, LocalDateTime fechaHora, String motivo){
-        Mascota mascota = mascotaRepository.findById(veterinarioId)
-        .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
+        // BUG FIX: usaba veterinarioId para buscar la mascota
+        Mascota mascota = mascotaRepository.findById(mascotaId)
+            .orElseThrow(() -> new RuntimeException("Mascota no encontrada"));
 
         Usuario veterinario = usuarioRepository.findById(veterinarioId)
-        .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
+            .orElseThrow(() -> new RuntimeException("Veterinario no encontrado"));
 
         Cita cita = new Cita();
         cita.setMascota(mascota);
@@ -40,13 +41,11 @@ public class CitaService {
         return citaRepository.save(cita);
     }
 
-    public Cita cambiarEstado(Long citaId, EstadoCita nueEstado){
+    public Cita cambiarEstado(Long citaId, EstadoCita nuevoEstado){
         Cita cita = citaRepository.findById(citaId)
             .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
-
-            cita.setEstado(nueEstado);
-
-            return citaRepository.save(cita);
+        cita.setEstado(nuevoEstado);
+        return citaRepository.save(cita);
     }
 
     public List<Cita> listarPorMascota(Long mascotaId){
@@ -60,13 +59,12 @@ public class CitaService {
     public List<Cita> listarPorDueno(Long duenioId){
         return citaRepository.findByMascotaDuenioId(duenioId);
     }
-    
-    public List<Cita> listadTodas(){
+
+    public List<Cita> listarTodas(){
         return citaRepository.findAll();
     }
 
     public void cancelar(Long citaId){
         cambiarEstado(citaId, EstadoCita.CANCELADA);
     }
-    
 }
